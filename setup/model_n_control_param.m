@@ -15,15 +15,3 @@ Ki_pos = [0.1; 0.1; 0.5];  % Integrativo
 Kp_ang = [10; 10; 10];     % Proporzionale
 Kd_ang = [2; 2; 2];        % Derivativo
 Ki_ang = [0.1; 0.1; 0.1];  % Integrativo
-
-%% Traiettoria desiderata (esempio: cerchio nel piano xy)
-t_sim = 10;         % Tempo di simulazione [s]
-r = 2.0;            % Raggio [m]
-omega = 1.0;        % Velocità angolare [rad/s]
-z_ref = 1.0;        % Altezza costante [m]
-
-% Genera segnali di riferimento
-time = 0:0.01:t_sim;
-x_ref = r*cos(omega*time);
-y_ref = r*sin(omega*time);
-z_ref = z_ref * ones(size(time));
