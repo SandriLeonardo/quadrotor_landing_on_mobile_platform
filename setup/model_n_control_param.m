@@ -15,3 +15,6 @@ Ki_pos = [0.1; 0.1; 0.5];  % Integrativo
 Kp_ang = [10; 10; 10];     % Proporzionale
 Kd_ang = [2; 2; 2];        % Derivativo
 Ki_ang = [0.1; 0.1; 0.1];  % Integrativo
+
+%% Time step
+dt = 0.01;

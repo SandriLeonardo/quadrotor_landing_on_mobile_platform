@@ -71,8 +71,7 @@ function [pos, vel, acc] = generate_linear_trajectory(p0, pf, t, t_total, profil
                         t_dec_start = t_acc + t_const;
                         t_in_dec = ti - t_dec_start;
                         
-                        pos(i, dim) = p_start + 0.5 * a_acc * t_acc^2 + v_max * t_const + 
-                                     v_max * t_in_dec + 0.5 * a_dec * t_in_dec^2;
+                        pos(i, dim) = p_start + 0.5 * a_acc * t_acc^2 + v_max * t_const + v_max * t_in_dec + 0.5 * a_dec * t_in_dec^2;
                         vel(i, dim) = v_max + a_dec * t_in_dec;
                         acc(i, dim) = a_dec;
                         
