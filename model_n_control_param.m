@@ -1,3 +1,4 @@
+function [m,g,Ix,Iy,Iz,Kp_pos,Kd_pos,Ki_pos,Kp_ang,Kd_ang,Ki_ang,dt] = model_n_control_param()
 %% Parametri del drone
 m = 1.0;        % Massa [kg]
 g = 9.81;       % Gravità [m/s²]

@@ -1,15 +1,18 @@
-function [T,phi_d,theta_d,psi_d] = position_control(desired_traj,state)
-run('C:\Users\loren\Desktop\Mag\Elective 1\quadrotor_landing_on_mobile_platform\setup\model_n_control_param.m')
+function [T,phi_d,theta_d,psi_d] = position_control(desired_traj,state,params)
+%run('C:\Users\loren\Desktop\Mag\Elective 1\quadrotor_landing_on_mobile_platform\setup\model_n_control_param.m')
 
-phi = state(7);
-theta = state(8);
-psi = state(9);
+
 x = state(1);
 y = state(2);
 z = state(3);
 x_dot = state(4);
 y_dot = state(5);
 z_dot = state(6);
+phi = state(7);
+theta = state(8);
+psi = state(9);
+
+
 x_d = desired_traj(1);
 y_d = desired_traj(2);
 z_d = desired_traj(3);
@@ -19,6 +22,13 @@ z_d_dot = desired_traj(6);
 x_d_ddot = desired_traj(7);
 y_d_ddot = desired_traj(8);
 z_d_ddot = desired_traj(9);
+
+m = params(1);
+g = params(2);
+Kp_pos = params(6);
+Kd_pos = params(7);
+Ki_pos = params(8);
+dt = params(12);
 
 % Parametri (m, g, guadagni, dt, ecc.) devono essere definiti o caricati
 % z_d, z, z_d_dot, z_dot, z_d_ddot sono rispettivamente la posizione, la velocità e
