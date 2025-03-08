@@ -65,7 +65,7 @@ if isempty(integral_error_x)
 end
 integral_error_x = integral_error_x + ex * dt;
 integral_max = 5.0;  % Valore arbitrario
-integral_error_x = max(min(integral_error_x, integral_max), -integral_max);
+integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo x (PID)
 U_x = Kp_pos(1) * ex + Kd_pos(1) * ex_dot + Ki_pos(1) * integral_error_x + x_d_ddot;
@@ -81,8 +81,6 @@ if isempty(integral_error_y)
     integral_error_y = 0;
 end
 integral_error_y = integral_error_y + ey * dt;
-integral_max = 5.0;  % Valore arbitrario
-integral_error_y = max(min(integral_error_y, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo x (PID)
 U_y = Kp_pos(2) * ey + Kd_pos(2) * ey_dot + Ki_pos(2) * integral_error_y + y_d_ddot;

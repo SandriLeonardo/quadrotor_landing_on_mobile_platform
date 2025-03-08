@@ -1,8 +1,8 @@
 function [pos, vel, acc] = only_linear_trajectory(t)
     % Parametri del profilo bang-coast-bang
     pos_A = [0, 0, 0];      % Posizione iniziale [x, y, z]
-    pos_B = [5, 3, 2];      % Posizione finale
-    T_tot = 10;             % Tempo totale del movimento
+    pos_B = [5, 3, 0];      % Posizione finale
+    T_tot = 20;             % Tempo totale del movimento
     a_max = 2;              % Accelerazione massima (m/s²)
 
     % Calcola la distanza totale
