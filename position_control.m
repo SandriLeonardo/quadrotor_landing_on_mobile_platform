@@ -45,11 +45,11 @@ if isempty(integral_error_z)
 end
 
 integral_error_z = integral_error_z + ez * dt;
-integral_max = 5.0;  % Valore arbitrario
-integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
+% integral_max = 10.0;  % Valore arbitrario
+% integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo z (PID)
-T_z = Kp_pos(3) * ez + Kd_pos(3) * ez_dot + Ki_pos(3) * integral_error_z + z_d_ddot + g;
+T_z = -(Kp_pos(3) * ez + Kd_pos(3) * ez_dot + Ki_pos(3) * integral_error_z + z_d_ddot) + g;
 
 % Calcolo della spinta totale, considerando la proiezione
 T = m * T_z / ((cos(phi) * cos(theta)) + 1e-6);
@@ -64,8 +64,8 @@ if isempty(integral_error_x)
     integral_error_x = 0;
 end
 integral_error_x = integral_error_x + ex * dt;
-integral_max = 5.0;  % Valore arbitrario
-integral_error_x = max(min(integral_error_x, integral_max), -integral_max);
+% integral_max = 10.0;  % Valore arbitrario
+% integral_error_x = max(min(integral_error_x, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo x (PID)
 U_x = Kp_pos(1) * ex + Kd_pos(1) * ex_dot + Ki_pos(1) * integral_error_x + x_d_ddot;
@@ -81,8 +81,8 @@ if isempty(integral_error_y)
     integral_error_y = 0;
 end
 integral_error_y = integral_error_y + ey * dt;
-integral_max = 5.0;  % Valore arbitrario
-integral_error_y = max(min(integral_error_y, integral_max), -integral_max);
+% integral_max = 10.0;  % Valore arbitrario
+% integral_error_y = max(min(integral_error_y, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo x (PID)
 U_y = Kp_pos(2) * ey + Kd_pos(2) * ey_dot + Ki_pos(2) * integral_error_y + y_d_ddot;
@@ -90,25 +90,54 @@ U_y = Kp_pos(2) * ey + Kd_pos(2) * ey_dot + Ki_pos(2) * integral_error_y + y_d_d
 T_x = (m/T) * U_x;
 T_y = (m/T) * U_y;
 
+%max_angle = 0.4; % ~23 gradi, limite ragionevole
+
 phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
 theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
-psi_d = atan2(y_d_dot, x_d_dot);
+%psi_d = atan2(y_d_dot, x_d_dot);
+psi_d = 0;
 
-ref_ang_pos = [phi_d,theta_d,psi_d];
+% phi_d = max(min(phi_d, max_angle), -max_angle);
+% theta_d = max(min(theta_d, max_angle), -max_angle);
 
-% Calculate desired angular velocities (body frame)
-persistent previous_phi_d previous_theta_d previous_psi_d;
+%ref_ang_pos = [phi_d,theta_d,psi_d];
 
-if isempty(previous_phi_d)
-    previous_phi_d = 0;
-    previous_theta_d = 0;
-    previous_psi_d = 0;
+% Memorizza stati precedenti per calcolo velocità angolari
+persistent prev_phi_d prev_theta_d prev_psi_d prev_time;
+if isempty(prev_phi_d)
+    prev_phi_d = phi_d;
+    prev_theta_d = theta_d;
+    prev_psi_d = psi_d;
+    prev_time = 0;
 end
 
-% Compute derivatives of desired Euler angles using finite difference
-phi_dot_d = (phi_d - previous_phi_d) / dt;
-theta_dot_d = (theta_d - previous_theta_d) / dt;
-psi_dot_d = (psi_d - previous_psi_d) / dt;
+% Calcolo delle velocità angolari con filtro passa-basso
+time_constant = 0.05;  % Costante di tempo per il filtro
+phi_dot_d = (phi_d - prev_phi_d) / dt;
+theta_dot_d = (theta_d - prev_theta_d) / dt;
+psi_dot_d = (psi_d - prev_psi_d) / dt;
 
-ref_ang_vel = [phi_dot_d,theta_dot_d,psi_dot_d];
+% Filtraggio delle velocità angolari
+persistent filtered_phi_dot_d filtered_theta_dot_d filtered_psi_dot_d;
+if isempty(filtered_phi_dot_d)
+    filtered_phi_dot_d = phi_dot_d;
+    filtered_theta_dot_d = theta_dot_d;
+    filtered_psi_dot_d = psi_dot_d;
+end
 
+alpha = dt / (time_constant + dt);  % Coefficiente filtro passa-basso
+filtered_phi_dot_d = (1-alpha) * filtered_phi_dot_d + alpha * phi_dot_d;
+filtered_theta_dot_d = (1-alpha) * filtered_theta_dot_d + alpha * theta_dot_d;
+filtered_psi_dot_d = (1-alpha) * filtered_psi_dot_d + alpha * psi_dot_d;
+
+
+% Aggiorna i valori precedenti per il prossimo ciclo
+prev_phi_d = phi_d;
+prev_theta_d = theta_d;
+prev_psi_d = psi_d;
+prev_time = prev_time + dt;
+
+% Output
+ref_ang_pos = [phi_d, theta_d, psi_d];
+ref_ang_vel = [filtered_phi_dot_d, filtered_theta_dot_d, filtered_psi_dot_d];
+end

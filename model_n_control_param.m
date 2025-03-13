@@ -2,20 +2,21 @@ function [m,g,Ix,Iy,Iz,Kp_pos,Kd_pos,Ki_pos,Kp_ang,Kd_ang,Ki_ang,dt] = model_n_c
 %% Parametri del drone
 m = 1.0;        % Massa [kg]
 g = 9.81;       % Gravità [m/s²]
-Ix = 0.01;      % Momento d'inerzia asse x [kg·m²]
-Iy = 0.01;      % Momento d'inerzia asse y [kg·m²]
-Iz = 0.02;      % Momento d'inerzia asse z [kg·m²]
+Ix = 0.1;      % Momento d'inerzia asse x [kg·m²]
+Iy = 0.1;      % Momento d'inerzia asse y [kg·m²]
+Iz = 0.2;      % Momento d'inerzia asse z [kg·m²]
 
-%% Guadagni PID
+%% Guadagni PID ridotti per maggiore stabilità
 % Controllo Posizione (x, y, z)
-Kp_pos = [2, 2, 15];   % Proporzionale
-Kd_pos = [1.2, 1.2, 8];    % Derivativo
-Ki_pos = [0.2, 0.2, 1];  % Integrativo
+Kp_pos = [0.001024,0.001024, 5];   % Proporzionale ridotto
+Kd_pos = [0.23171, 0.23171, 0.1];    % Derivativo ridotto
+Ki_pos = [0.006, 0.006, 0.0592879];  % Integrativo ridotto
 
 % Controllo Angoli (φ, θ, ψ)
-Kp_ang = [8, 8, 5];     % Prima era [25; 25; 15]
-Kd_ang = [4, 4, 3];      % Prima era [6; 6; 4]
-Ki_ang = [0.1, 0.1, 0.1]; % Mantenuto basso
+Kp_ang = [0.022841,0.022841,0.04568];
+Kd_ang = [0.09868, 0.09868, 0.19736];
+Ki_ang = [0.00132, 0.00132, 0.00264];
 
 %% Time step
 dt = 0.001;
+end
