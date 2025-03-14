@@ -92,8 +92,10 @@ T_y = (m/T) * U_y;
 
 %max_angle = 0.4; % ~23 gradi, limite ragionevole
 
-phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
-theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
+%phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
+phi_d = asin(T_y);
+%theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
+theta_d = -asin((T_x));
 %psi_d = atan2(y_d_dot, x_d_dot);
 psi_d = 0;
 
@@ -112,7 +114,7 @@ if isempty(prev_phi_d)
 end
 
 % Calcolo delle velocità angolari con filtro passa-basso
-time_constant = 0.05;  % Costante di tempo per il filtro
+time_constant = 0.0001;  % Costante di tempo per il filtro
 phi_dot_d = (phi_d - prev_phi_d) / dt;
 theta_dot_d = (theta_d - prev_theta_d) / dt;
 psi_dot_d = (psi_d - prev_psi_d) / dt;

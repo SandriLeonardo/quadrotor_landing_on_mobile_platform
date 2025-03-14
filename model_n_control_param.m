@@ -8,15 +8,15 @@ Iz = 0.2;      % Momento d'inerzia asse z [kg·m²]
 
 %% Guadagni PID ridotti per maggiore stabilità
 % Controllo Posizione (x, y, z)
-Kp_pos = [0.001024,0.001024, 5];   % Proporzionale ridotto
-Kd_pos = [0.23171, 0.23171, 0.1];    % Derivativo ridotto
-Ki_pos = [0.006, 0.006, 0.0592879];  % Integrativo ridotto
+Kp_pos = [0.1024,0.1024, 10];   % Proporzionale ridotto
+Kd_pos = [0.23171, 0.23171, 0.01];    % Derivativo ridotto
+Ki_pos = [0.006, 0.006, 0.00592879];  % Integrativo ridotto
 
 % Controllo Angoli (φ, θ, ψ)
-Kp_ang = [0.022841,0.022841,0.04568];
-Kd_ang = [0.09868, 0.09868, 0.19736];
-Ki_ang = [0.00132, 0.00132, 0.00264];
+Kp_ang = [1.2841,1.2841,0.04568];
+Kd_ang = [0.9868, 0.9868, 0.19736];
+Ki_ang = [0.132, 0.132, 0.0264];
 
 %% Time step
-dt = 0.001;
+dt = 0.0001;
 end

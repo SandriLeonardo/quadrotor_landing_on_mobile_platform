@@ -45,8 +45,8 @@ if isempty(integral_error_z)
 end
 
 integral_error_z = integral_error_z + ez * dt;
-integral_max = 10.0;  % Valore arbitrario
-integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
+% integral_max = 10.0;  % Valore arbitrario
+% integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
 
 % Calcolo del termine di controllo lungo z (PID)
 T_z = -(Kp_pos(3) * ez + Kd_pos(3) * ez_dot + Ki_pos(3) * integral_error_z + z_d_ddot) + g;
@@ -92,7 +92,9 @@ T_y = (m/T) * U_y;
 
 %max_angle = 0.4; % ~23 gradi, limite ragionevole
 
-phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
+%phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
+phi_d = asin(T_y*cos(psi));
+%theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
 theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
 %psi_d = atan2(y_d_dot, x_d_dot);
 psi_d = 0;
@@ -130,11 +132,6 @@ filtered_phi_dot_d = (1-alpha) * filtered_phi_dot_d + alpha * phi_dot_d;
 filtered_theta_dot_d = (1-alpha) * filtered_theta_dot_d + alpha * theta_dot_d;
 filtered_psi_dot_d = (1-alpha) * filtered_psi_dot_d + alpha * psi_dot_d;
 
-% Limitazione delle velocità angolari
-max_ang_vel = 0.3;  % rad/s, ridotto
-filtered_phi_dot_d = max(min(filtered_phi_dot_d, max_ang_vel), -max_ang_vel);
-filtered_theta_dot_d = max(min(filtered_theta_dot_d, max_ang_vel), -max_ang_vel);
-filtered_psi_dot_d = max(min(filtered_psi_dot_d, max_ang_vel), -max_ang_vel);
 
 % Aggiorna i valori precedenti per il prossimo ciclo
 prev_phi_d = phi_d;
