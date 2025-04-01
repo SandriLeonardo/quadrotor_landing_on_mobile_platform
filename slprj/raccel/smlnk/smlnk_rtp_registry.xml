@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/slsa_mm_rtp_registry/R2023a">
+  <slsa.mm.rtpregistry.ModelMetadata type="slsa.mm.rtpregistry.ModelMetadata" uuid="a228795b-0051-4893-89d4-cf0e84f1451b">
+    <modelName>smlnk</modelName>
+  </slsa.mm.rtpregistry.ModelMetadata>
+  <slsa.mm.rtpregistry.RtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e95746b7-0999-443e-8344-99c6c5c8afaa">
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="596e2d19-1324-4b33-be75-ddfd391fe320"/>
+    <valueIndices>0</valueIndices>
+    <valueIndices>0</valueIndices>
+  </slsa.mm.rtpregistry.RtpLocation>
+  <slsa.mm.rtpregistry.Parameter type="slsa.mm.rtpregistry.Parameter" uuid="596e2d19-1324-4b33-be75-ddfd391fe320">
+    <id type="slsa.mm.rtpregistry.VariableId" uuid="eeefe6c6-304f-4d78-9f56-f5194606faab"/>
+    <rtpLocation type="slsa.mm.rtpregistry.RtpLocation" uuid="e95746b7-0999-443e-8344-99c6c5c8afaa"/>
+  </slsa.mm.rtpregistry.Parameter>
+  <slsa.mm.rtpregistry.VariableId type="slsa.mm.rtpregistry.VariableId" uuid="eeefe6c6-304f-4d78-9f56-f5194606faab">
+    <workspaceName>smlnk</workspaceName>
+    <name>Sample_Time</name>
+    <parameter type="slsa.mm.rtpregistry.Parameter" uuid="596e2d19-1324-4b33-be75-ddfd391fe320"/>
+  </slsa.mm.rtpregistry.VariableId>
+</MF0>

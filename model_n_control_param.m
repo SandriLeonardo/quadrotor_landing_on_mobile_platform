@@ -7,15 +7,26 @@ Iy = 0.1;      % Momento d'inerzia asse y [kg·m²]
 Iz = 0.2;      % Momento d'inerzia asse z [kg·m²]
 
 %% Guadagni PID ridotti per maggiore stabilità
-% Controllo Posizione (x, y, z)
-Kp_pos = [0.1024,0.1024, 10];   % Proporzionale ridotto
-Kd_pos = [0.23171, 0.23171, 0.01];    % Derivativo ridotto
-Ki_pos = [0.006, 0.006, 0.00592879];  % Integrativo ridotto
+% % Controllo Posizione (x, y, z)
+% Kp_pos = [0.1024,0.1024, 10];   % Proporzionale ridotto
+% Kd_pos = [0.23171, 0.23171, 0.01];    % Derivativo ridotto
+% Ki_pos = [0.006, 0.006, 0.00592879];  % Integrativo ridotto
+
+% Controllo Posizione (x, y, z) %REWORKATI DA ALE DOPO SBLOCCO HOVERING
+Kp_pos = [20,20,49.8];   % Proporzionale ridotto
+Kd_pos = [0.001, 0.001, 0.2];    % Derivativo ridotto
+Ki_pos = [0.18, 0.18, 0.1];  % Integrativo ridotto
+
+% % Controllo Angoli (φ, θ, ψ)
+% Kp_ang = [1.2841,1.2841,0.04568];
+% Kd_ang = [0.9868, 0.9868, 0.19736];
+% Ki_ang = [0.132, 0.132, 0.0264];
 
 % Controllo Angoli (φ, θ, ψ)
-Kp_ang = [1.2841,1.2841,0.04568];
-Kd_ang = [0.9868, 0.9868, 0.19736];
-Ki_ang = [0.132, 0.132, 0.0264];
+Kp_ang = [0.01,0.01,0.01];
+Kd_ang = [0.01,0.01,0.01];
+Ki_ang = [0.01,0.01,0.01];
+ 
 
 %% Time step
 dt = 0.0001;

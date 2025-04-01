@@ -25,7 +25,7 @@ integral_error_phi = integral_error_phi + e_phi * dt;
 integral_max = 10.0;  % Valore arbitrario
 integral_error_phi = max(min(integral_error_phi, integral_max), -integral_max);
 
-% Calcolo del termine di controllo lungo z (PID)
+% Calcolo del termine di controllo lungo x, angolo di ROLL (PID)
 tau_phi = Kp_ang(1) * e_phi + Kd_ang(1) * e_phi_dot + Ki_ang(1) * integral_error_phi;
 
 
@@ -42,10 +42,11 @@ integral_error_theta = integral_error_theta + e_theta * dt;
 integral_max = 10.0;  % Valore arbitrario
 integral_error_theta = max(min(integral_error_theta, integral_max), -integral_max);
 
-% Calcolo del termine di controllo lungo z (PID)
+% Calcolo del termine di controllo lungo y, angolo di PITCH (PID)
 tau_theta = Kp_ang(2) * e_theta + Kd_ang(2) * e_theta_dot + Ki_ang(2) * integral_error_theta;
 
 % Calcolo dell'errore e della sua derivata
+
 e_psi = ref_ang_pos(3) - psi;
 e_psi_dot = ref_ang_vel(3) - psi_dot;
 
@@ -58,5 +59,5 @@ integral_error_psi = integral_error_psi + e_psi * dt;
 integral_max = 10.0;  % Valore arbitrario
 integral_error_psi = max(min(integral_error_psi, integral_max), -integral_max);
 
-% Calcolo del termine di controllo lungo z (PID)
+% Calcolo del termine di controllo lungo z, angolo di YAW (PID)
 tau_psi = Kp_ang(3) * e_psi + Kd_ang(3) * e_psi_dot + Ki_ang(3) * integral_error_psi;

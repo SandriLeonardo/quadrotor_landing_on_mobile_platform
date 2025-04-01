@@ -64,14 +64,14 @@ function [pos, vel, acc] = only_linear_trajectory(t)
     % Parametri della traiettoria
     pos_A = [0, 0, 0]; % Posizione iniziale [x, y, z]
     pos_B = [3, 5, 8]; % Posizione finale [x, y, z]
-    T_tot = 10; % Tempo totale del movimento
+    Time_tot = 10; % Tempo totale del movimento
     
     % Calcola la distanza totale
     delta_pos = pos_B - pos_A;
-    distanza_totale = norm(delta_pos); % Distanza euclidea
+    distanza_totale = norm(delta_pos); % Distanza euclidea 3D
     
     % Calcola la velocità costante necessaria
-    v_const = distanza_totale / T_tot;
+    v_const = distanza_totale / Time_tot;
     vel_vector = (delta_pos / distanza_totale) * v_const; % Vettore velocità direzione pos_B
     
     % Calcola posizione, velocità e accelerazione in base al tempo t
@@ -80,7 +80,7 @@ function [pos, vel, acc] = only_linear_trajectory(t)
         pos = pos_A;
         vel = [0, 0, 0];
         acc = [0, 0, 0];
-    elseif t <= T_tot
+    elseif t <= Time_tot
         % Movimento a velocità costante
         pos = pos_A + vel_vector * t;
         vel = vel_vector;

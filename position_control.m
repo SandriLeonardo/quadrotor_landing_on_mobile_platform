@@ -1,6 +1,9 @@
-function [T,ref_ang_pos,ref_ang_vel] = position_control(desired_traj,state,params)
+function [Uvec,Tvec,ref_ang_pos,ref_ang_vel] = position_control(desired_traj,state,params)
 %run('C:\Users\loren\Desktop\Mag\Elective 1\quadrotor_landing_on_mobile_platform\setup\model_n_control_param.m')
 
+%This epsilon is added to expression that could be zero (leading to
+%singulairities)
+epsilon_for_numerical_stability=1e-6;
 
 x = state(1);
 y = state(2);
@@ -34,11 +37,11 @@ dt = params(24);
 % z_d, z, z_d_dot, z_dot, z_d_ddot sono rispettivamente la posizione, la velocità e
 % l'accelerazione desiderate e attuali lungo l'asse z.
 
-% Calcolo dell'errore e della sua derivata
+% Calcolo dell'errore e della sua derivata (lungo z)
 ez = z_d - z;
 ez_dot = z_d_dot - z_dot;
 
-% Aggiornamento dell'integrale (supponendo dt definito)
+% Aggiornamento dell'errore integrale lungo z (supponendo dt definito)
 persistent integral_error_z;
 if isempty(integral_error_z)
     integral_error_z = 0;
@@ -48,11 +51,16 @@ integral_error_z = integral_error_z + ez * dt;
 % integral_max = 10.0;  % Valore arbitrario
 % integral_error_z = max(min(integral_error_z, integral_max), -integral_max);
 
-% Calcolo del termine di controllo lungo z (PID)
+% Calcolo del termine di controllo lungo z (PID)--------------------------|
 T_z = -(Kp_pos(3) * ez + Kd_pos(3) * ez_dot + Ki_pos(3) * integral_error_z + z_d_ddot) + g;
 
+% LYAPUNOV VERSION
+% (Slide of Backstepping Control + Claude w/reasoningadding the integral term)
+%T_z = z_d_ddot + (1+Kp_pos(3)*Kd_pos(3))*ez + (Kp_pos(3)+Kd_pos(3))*ez_dot + Ki_pos(3)*integral_error_z;
+
 % Calcolo della spinta totale, considerando la proiezione
-T = m * T_z / ((cos(phi) * cos(theta)) + 1e-6);
+%T = m * T_z / ((cos(phi) * cos(theta)) + epsilon_for_numerical_stability);
+T = (m / (cos(phi) * cos(theta))) * (g + T_z);
 
 % Calcolo dell'errore e della sua derivata
 ex = x_d - x;
@@ -70,7 +78,6 @@ integral_error_x = integral_error_x + ex * dt;
 % Calcolo del termine di controllo lungo x (PID)
 U_x = Kp_pos(1) * ex + Kd_pos(1) * ex_dot + Ki_pos(1) * integral_error_x + x_d_ddot;
 
-
 % Calcolo dell'errore e della sua derivata
 ey = y_d - y;
 ey_dot = y_d_dot - y_dot;
@@ -84,18 +91,33 @@ integral_error_y = integral_error_y + ey * dt;
 % integral_max = 10.0;  % Valore arbitrario
 % integral_error_y = max(min(integral_error_y, integral_max), -integral_max);
 
-% Calcolo del termine di controllo lungo x (PID)
+% Calcolo del termine di controllo lungo y (PID)
 U_y = Kp_pos(2) * ey + Kd_pos(2) * ey_dot + Ki_pos(2) * integral_error_y + y_d_ddot;
+
+
+
+%U_x and U_y need sto be bounded
+% if we do not bound U_x and U_y we can obtain an unfeasable control
+
+% Calculate maximum allowable accelerations based on physics
+max_tilt_angle = 0.4; % About 40 degrees, arbitrary
+max_lateral_accel = g * tan(max_tilt_angle); % Maximum possible lateral acceleration
+asinboundary=0.99 
+
+%BOUNDING IN UX AND UY temporarluy commented out
+U_x=saturate(U_x,-max_lateral_accel,max_lateral_accel)
+U_y=saturate(U_y,-max_lateral_accel,max_lateral_accel)
+
+
 
 T_x = (m/T) * U_x;
 T_y = (m/T) * U_y;
 
-%max_angle = 0.4; % ~23 gradi, limite ragionevole
 
-%phi_d = asin(T_y*cos(psi) - T_x*sin(psi));
-phi_d = asin(T_y);
-%theta_d = -asin((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d));
-theta_d = -asin((T_x));
+phi_d = asin(saturate(T_y*cos(psi) - T_x*sin(psi),-asinboundary,asinboundary));
+%phi_d = asin(T_y);
+theta_d = -asin(saturate((T_y*cos(psi) + T_x*sin(psi))/cos(phi_d),-asinboundary,asinboundary));
+%theta_d = -asin((T_x));
 %psi_d = atan2(y_d_dot, x_d_dot);
 psi_d = 0;
 
@@ -114,7 +136,7 @@ if isempty(prev_phi_d)
 end
 
 % Calcolo delle velocità angolari con filtro passa-basso
-time_constant = 0.0001;  % Costante di tempo per il filtro
+time_constant = 0.05;  % Costante di tempo per il filtro
 phi_dot_d = (phi_d - prev_phi_d) / dt;
 theta_dot_d = (theta_d - prev_theta_d) / dt;
 psi_dot_d = (psi_d - prev_psi_d) / dt;
@@ -142,4 +164,12 @@ prev_time = prev_time + dt;
 % Output
 ref_ang_pos = [phi_d, theta_d, psi_d];
 ref_ang_vel = [filtered_phi_dot_d, filtered_theta_dot_d, filtered_psi_dot_d];
+%FOR SCOPES
+Uvec=[U_x,U_y]
+Tvec=[T,T_x,T_y,T_z]
+end
+
+%UTILITY FUNCTION TO SATURATE SOME VARIABLES
+function val_sat = saturate(val, min_val, max_val)
+    val_sat = max(min(val, max_val), min_val);
 end

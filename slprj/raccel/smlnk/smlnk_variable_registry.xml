@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MF0 version="1.1" packageUris="http://schema.mathworks.com/mf0/slsa_mm_parameter_tuning/R2021b">
+  <slsa.mm.parametertuning.VariableRegistry type="slsa.mm.parametertuning.VariableRegistry" uuid="b3330063-f3f0-46c5-b243-69fdb072b14e">
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="dea3a8dd-4506-4c1e-afe9-28ca31d52803">
+      <blockPath>smlnk/Angles Phi, Theta, Psi</blockPath>
+      <parameterName>SampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="551b7c66-8f4a-46e4-9b63-df7a85348b60">
+      <blockPath>smlnk/Attitude Controller</blockPath>
+      <parameterName>SystemSampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="156bf605-58b8-4077-a8d4-e65c09026330">
+      <blockPath>smlnk/Trajectory</blockPath>
+      <parameterName>SystemSampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="3042b2b5-8e93-4a24-a244-0a6fc96a36bf">
+      <blockPath>smlnk/Complete Output</blockPath>
+      <parameterName>SampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="57de5ec9-e8d5-4df3-aa81-6887694fe3cf">
+      <blockPath>smlnk/Coordinates x,y,z</blockPath>
+      <parameterName>SampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="c97d7a27-49d4-40e7-85f5-0fbf511951ea">
+      <blockPath>smlnk/Parameters </blockPath>
+      <parameterName>SystemSampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="7c9a7680-fa4b-4f3d-bdd1-d5d783c8da4d">
+      <blockPath>smlnk/Position &amp; Trajectory Comparison</blockPath>
+      <parameterName>SampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="c2be6ac0-bf0a-4ed0-ab85-37766b10be0a">
+      <blockPath>smlnk/Position Controller</blockPath>
+      <parameterName>SystemSampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <blockParameters type="slsa.mm.parametertuning.BlockParameter" uuid="5c628afe-fa1a-4457-8ca8-f73586512e71">
+      <blockPath>smlnk/Ux Uy controls</blockPath>
+      <parameterName>SampleTime</parameterName>
+      <expression type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <tunabilityType>Nontunable</tunabilityType>
+    </blockParameters>
+    <expressions type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5">
+      <expression>Sample_Time</expression>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="dea3a8dd-4506-4c1e-afe9-28ca31d52803"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="551b7c66-8f4a-46e4-9b63-df7a85348b60"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="156bf605-58b8-4077-a8d4-e65c09026330"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="3042b2b5-8e93-4a24-a244-0a6fc96a36bf"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="57de5ec9-e8d5-4df3-aa81-6887694fe3cf"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="c97d7a27-49d4-40e7-85f5-0fbf511951ea"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="7c9a7680-fa4b-4f3d-bdd1-d5d783c8da4d"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="c2be6ac0-bf0a-4ed0-ab85-37766b10be0a"/>
+      <users type="slsa.mm.parametertuning.BlockParameter" uuid="5c628afe-fa1a-4457-8ca8-f73586512e71"/>
+      <variables type="slsa.mm.parametertuning.Variable" uuid="009a5132-24ab-4989-a065-b1cf8ee57f92"/>
+    </expressions>
+    <name>smlnk</name>
+    <variables type="slsa.mm.parametertuning.Variable" uuid="009a5132-24ab-4989-a065-b1cf8ee57f92">
+      <expressions type="slsa.mm.parametertuning.Expression" uuid="5854fc28-f567-444b-a0c5-a2c69d0abeb5"/>
+      <name>Sample_Time</name>
+      <workspace type="slsa.mm.parametertuning.Workspace" uuid="46831621-c7e0-49c4-b05f-546c0d6908e9"/>
+    </variables>
+    <workspaces type="slsa.mm.parametertuning.Workspace" uuid="46831621-c7e0-49c4-b05f-546c0d6908e9">
+      <name>smlnk</name>
+      <type>MODEL</type>
+      <variables type="slsa.mm.parametertuning.Variable" uuid="009a5132-24ab-4989-a065-b1cf8ee57f92"/>
+    </workspaces>
+  </slsa.mm.parametertuning.VariableRegistry>
+</MF0>
