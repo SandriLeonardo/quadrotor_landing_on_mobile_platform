@@ -89,8 +89,8 @@ rtcapiStoredFloats [ 1 ] , ( int8_T ) 1 , ( uint8_T ) 0 } , { ( const void *
 mmiStatic = { { rtBlockSignals , 14 , rtRootInputs , 0 , rtRootOutputs , 0 }
 , { rtBlockParameters , 2 , rtModelParameters , 1 } , { ( NULL ) , 0 } , {
 rtDataTypeMap , rtDimensionMap , rtFixPtMap , rtElementMap , rtSampleTimeMap
-, rtDimensionArray } , "float" , { 1694352703U , 1627899302U , 262459659U ,
-2132616286U } , ( NULL ) , 0 , ( boolean_T ) 0 , rt_LoggedStateIdxList } ;
+, rtDimensionArray } , "float" , { 1746000737U , 8173328U , 3270778873U ,
+2862056898U } , ( NULL ) , 0 , ( boolean_T ) 0 , rt_LoggedStateIdxList } ;
 const rtwCAPI_ModelMappingStaticInfo * smlnk_GetCAPIStaticMap ( void ) {
 return & mmiStatic ; }
 #ifndef HOST_CAPI_BUILD
