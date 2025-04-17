@@ -14,9 +14,9 @@ if (clientID > -1)
     sim.simxStartSimulation(clientID, sim.simx_opmode_blocking);
 
         % Replay trajectory
-    for i = 1:length(quadrotor_states.time)
-        position = quadrotor_states.signals.values(i, 1:3);
-        orientation = quadrotor_states.signals.values(i, 4:6);
+    for i = 1:length(out.quadrotor_states.time)
+        position = out.quadrotor_states.signals.values(i, 1:3);
+        orientation = out.quadrotor_states.signals.values(i, 4:6);
         
         % Send to CoppeliaSim
         sim.simxSetObjectPosition(clientID, quadHandle, -1, position, sim.simx_opmode_oneshot);
