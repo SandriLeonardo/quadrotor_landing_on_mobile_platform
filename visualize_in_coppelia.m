@@ -15,7 +15,7 @@ if (clientID > -1)
     time = out.quadrotor_states.time;
 
     % Subsample for visualization (every 100th point)
-    step = 50;
+    step = 50; 
 
     % Replay trajectory
     for i = 1:step:length(time)
