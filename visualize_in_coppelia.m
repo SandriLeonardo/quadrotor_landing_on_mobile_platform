@@ -55,27 +55,22 @@ if (clientID > -1)
     
     fprintf('Starting visualization: %d total points, using every %dth point\n', length(time), step);
     
-    % Replay trajectory with proper timing
+    % Replay trajectory with interpolation for smooth visualization
     tic;
-    for i = 1:step:length(time)
-        if i <= size(data, 1)
-            position = data(i, 1:3);
-            orientation = data(i, 4:6);
-            
-            % Send to CoppeliaSim using BLOCKING mode for synchronization
-            res1 = sim.simxSetObjectPosition(clientID, quadHandle, -1, position, sim.simx_opmode_oneshot);
-            res2 = sim.simxSetObjectOrientation(clientID, quadHandle, -1, orientation, sim.simx_opmode_oneshot);
-            sim.simxSynchronousTrigger(clientID);
-            
-            if (res1 ~= sim.simx_return_ok || res2 ~= sim.simx_return_ok)
-                fprintf('Warning: Failed to update position at step %d\n', i);
+    for i = 1:step:length(time)-step
+        if i+step <= size(data, 1)
+            % Linear interpolation between points
+            for j = 0:10
+                alpha = j/10;
+                interp_pos = (1-alpha)*data(i,1:3) + alpha*data(i+step,1:3);
+                interp_ang = (1-alpha)*data(i,4:6) + alpha*data(i+step,4:6);
+                
+                sim.simxSetObjectPosition(clientID, quadHandle, -1, interp_pos, sim.simx_opmode_oneshot);
+                sim.simxSetObjectOrientation(clientID, quadHandle, -1, interp_ang, sim.simx_opmode_oneshot);
+                pause(0.01);
             end
             
-            % Use slower timing for visible movement
-            pause(0.01); % 100ms between updates - adjust as needed
-            
-            % Progress indicator
-            if mod(i, 100) == 0
+            if mod(i, 6000) == 0
                 fprintf('Progress: %.1f%%\n', 100*i/length(time));
             end
         end

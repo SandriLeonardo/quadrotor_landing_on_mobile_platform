@@ -194,7 +194,7 @@ if isempty(prev_phi_d)
 end
 
 % Calcolo delle velocità angolari con filtro passa-basso
-time_constant = 0.05;  % Costante di tempo per il filtro
+time_constant = 0.1;  % Costante di tempo per il filtro
 phi_dot_d = (phi_d - prev_phi_d) / dt;
 theta_dot_d = (theta_d - prev_theta_d) / dt;
 psi_dot_d = (psi_d - prev_psi_d) / dt;
