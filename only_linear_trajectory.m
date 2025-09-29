@@ -63,7 +63,7 @@
 function [pos, vel, acc] = only_linear_trajectory(t)
     % Parametri della traiettoria
     pos_A = [0, 0, 0]; % Posizione iniziale [x, y, z]
-    pos_B = [2, -2, 1]; % Posizione finale [x, y, z]
+    pos_B = [-1.3, -0.7, 1]; % Posizione finale [x, y, z]
     Time_tot = 60; % Tempo totale del movimento
     
     % Calcola la distanza totale

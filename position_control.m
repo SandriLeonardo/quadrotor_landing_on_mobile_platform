@@ -81,7 +81,12 @@ integral_error_z = integral_error_z + ez * dt;  %INTEGRAL ERROR
 T_z = -(Kp_pos(3) * ez + Kd_pos(3) * ez_dot + Ki_pos(3) * integral_error_z + z_d_ddot);
 
 % ---------- TOTAL THRUST CALCULATION
-T = (m / (cos(phi) * cos(theta))) * (g + T_z);
+cos_product = cos(phi) * cos(theta);
+if abs(cos_product) < 0.1
+    cos_product = sign(cos_product) * 0.1;
+end
+T = (m / cos_product) * (g + T_z);
+T = saturate(T, 0.1*m*g, 4*m*g);
 
 %-------------------------------------------------------------------------
 % Explaination:
