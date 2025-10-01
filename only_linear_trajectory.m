@@ -1,98 +1,61 @@
-% function [pos, vel, acc] = only_linear_trajectory(t)
-%     % Parametri del profilo bang-coast-bang
-%     pos_A = [0, 0, 0];      % Posizione iniziale [x, y, z]
-%     pos_B = [2, 2, ];      % Posizione finale
-%     T_tot = 10;             % Tempo totale del movimento
-%     a_max = 1;              % Accelerazione massima (m/s²)
-% 
-%     % Calcola la distanza totale
-%     delta_pos = pos_B - pos_A;
-%     distanza_totale = norm(delta_pos); % Distanza euclidea
-% 
-%     % Calcola la durata delle fasi di accelerazione/decelerazione (T_acc)
-%     % Equazione del moto: distanza = area trapezio velocità
-%     % Soluzione per T_acc: T_acc = (a_max * T_tot - sqrt(a_max^2 * T_tot^2 - 2 * a_max * distanza)) / a_max
-%     T_acc = T_tot/2 - sqrt((T_tot/2)^2 - distanza_totale/a_max);
-% 
-%     % Verifica che T_acc sia valido (se no, usa accelerazione costante)
-%     if imag(T_acc) ~= 0 || T_acc > T_tot/2
-%         error('Impossibile raggiungere la posizione finale con i parametri dati. Aumenta a_max o T_tot.');
-%     end
-% 
-%     % Velocità massima durante la fase "coast"
-%     v_max = a_max * T_acc;
-% 
-%     % Calcola posizione, velocità e accelerazione in base al tempo t
-%     if t < 0
-%         % Tempo negativo: posizione iniziale
-%         pos = pos_A;
-%         vel = [0, 0, 0];
-%         acc = [0, 0, 0];
-% 
-%     elseif t <= T_acc
-%         % Fase 1: Accelerazione (bang)
-%         acc = (delta_pos / distanza_totale) * a_max; % Vettore accelerazione direzione pos_B
-%         vel = acc * t;
-%         pos = pos_A + 0.5 * acc * t^2;
-% 
-%     elseif t <= T_tot - T_acc
-%         % Fase 2: Velocità costante (coast)
-%         acc = [0, 0, 0];
-%         vel = (delta_pos / distanza_totale) * v_max; % Velocità costante
-%         pos = pos_A + 0.5 * acc * T_acc^2 + vel * (t - T_acc);
-% 
-%     elseif t <= T_tot
-%         % Fase 3: Decelerazione (bang)
-%         acc = -(delta_pos / distanza_totale) * a_max; % Accelerazione opposta
-%         vel = (delta_pos / distanza_totale) * v_max + acc * (t - (T_tot - T_acc));
-%         pos = pos_B - 0.5 * (-acc) * (T_tot - t)^2;
-% 
-%     else
-%         % Tempo superiore a T_tot: mantieni posizione finale
-%         pos = pos_B;
-%         vel = [0, 0, 0];
-%         acc = [0, 0, 0];
-%     end
-% 
-%     % Formato Simulink-friendly (vettori riga)
-%     pos = pos(:)'; 
-%     vel = vel(:)';
-%     acc = acc(:)';
-% end
-
-function [pos, vel, acc] = only_linear_trajectory(t)
-    % Parametri della traiettoria
-    pos_A = [0, 0, 0]; % Posizione iniziale [x, y, z]
-    pos_B = [-1.3, -0.7, 1]; % Posizione finale [x, y, z]
-    Time_tot = 60; % Tempo totale del movimento
+function [pos, vel, acc] = only_linear_trajectory(t, hovering_position, state)
+    % only_linear_trajectory - Generates a smooth linear trajectory
+    %
+    % Inputs:
+    %   t - current simulation time
+    %   hovering_position - current hover position [x,y,z]
+    %   state - current state (1=takeoff, 2=follow, 3=landing)
+    %
+    % Outputs:
+    %   pos - position [x,y,z]
+    %   vel - velocity [x,y,z]
+    %   acc - acceleration [x,y,z]
     
-    % Calcola la distanza totale
-    delta_pos = pos_B - pos_A;
-    distanza_totale = norm(delta_pos); % Distanza euclidea 3D
+    persistent t_start trajectory_active pos_A_saved
     
-    % Calcola la velocità costante necessaria
-    v_const = distanza_totale / Time_tot;
-    vel_vector = (delta_pos / distanza_totale) * v_const; % Vettore velocità direzione pos_B
-    
-    % Calcola posizione, velocità e accelerazione in base al tempo t
-    if t < 0
-        % Tempo negativo: posizione iniziale
-        pos = pos_A;
-        vel = [0, 0, 0];
-        acc = [0, 0, 0];
-    elseif t <= Time_tot
-        % Movimento a velocità costante
-        pos = pos_A + vel_vector * t;
-        vel = vel_vector;
-        acc = [0, 0, 0];
-    else
-        % Tempo superiore a T_tot: mantieni posizione finale
-        pos = pos_B;
-        vel = [0, 0, 0];
-        acc = [0, 0, 0];
+    % Initialize persistent variables on first call
+    if isempty(trajectory_active)
+        trajectory_active = false;
+        t_start = 0;
+        pos_A_saved = hovering_position; % default starting point
     end
     
-    % Formato Simulink-friendly (vettori riga)
+    % Trajectory parameters
+    pos_B = [-2.6, -0.7, 4];   % Target position
+    Time_tot = 60;             % Total trajectory time
+    
+    % Default outputs (stay at hover)
+    pos = hovering_position(:)';
+    vel = [0, 0, 0];
+    acc = [0, 0, 0];
+    
+    % Activate trajectory when state becomes 2
+    if state == 2 && ~trajectory_active
+        t_start = t;
+        trajectory_active = true;
+        pos_A_saved = hovering_position(:)';  % Save starting point
+        % Optional debug
+        fprintf('Trajectory started at t=%.2f, start pos=[%.3f %.3f %.3f]\n', ...
+                t, pos_A_saved(1), pos_A_saved(2), pos_A_saved(3));
+    end
+    
+    
+    % Compute trajectory if active
+    if trajectory_active
+        % Local time, clamped to [0, Time_tot]
+        t_local = t - t_start;
+        t_local = max(0, min(t_local, Time_tot)); % Without it we would have overshoot
+        
+        % Linear interpolation factor
+        alpha = t_local / Time_tot;
+        
+        % Compute position, velocity, acceleration
+        pos = pos_A_saved + alpha * (pos_B - pos_A_saved);
+        vel = (pos_B - pos_A_saved) / Time_tot;
+        acc = [0, 0, 0];  % Constant velocity, no acceleration
+    end
+    
+    % Ensure row vectors for Simulink
     pos = pos(:)';
     vel = vel(:)';
     acc = acc(:)';
