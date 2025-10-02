@@ -8,14 +8,14 @@ Iz = 0.2;       % Momento d'inerzia asse z [kg·m²]
 
 %% GUADAGNI PID
 %Controllo Posizione (x, y, z)
-Kp_pos = [1, 1,20];    % 2.4 2.4 15
-Kd_pos = [1,1,8];    
+Kp_pos = [2.4, 2.4,15];    % 2.4 2.4 15
+Kd_pos = [1,1,1];    
 Ki_pos = [0.01,0.01,6];  % 0.01,0.01
 
 % Controllo Angoli (φ, θ, ψ)
-Kp_ang = [1,1,5];
-Kd_ang = [0.5,0.5,1]; %0.2 0.2
-Ki_ang = [0.01,0.01,4];
+Kp_ang = [1,1,1];
+Kd_ang = [0.2,0.2,1];
+Ki_ang = [0.01,0.01,0.05];
 
 
 %% Time step (Overwritten by Simulink Sample_Time)

@@ -4,8 +4,8 @@ function [pos, vel, acc] = hovering_takeoff(t)
     vel = zeros(1,3);
     acc = zeros(1,3);
 
-    target_height = 3;
-    v_const = 0.5;   % Ascent speed [m/s]
+    target_height = 3; % Va cambiato anche da stateManager (TODO)
+    v_const = 0.25;   % Ascent speed [m/s]
     
     % Calculate expected position based on time
     expected_z = v_const * t;
