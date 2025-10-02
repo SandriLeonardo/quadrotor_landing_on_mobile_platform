@@ -15,6 +15,15 @@ if (clientID > -1)
         sim.delete();
         return;
     end
+
+    [res, platformHandle] = sim.simxGetObjectHandle(clientID, 'OmniPlatform', sim.simx_opmode_blocking);
+    if (res ~= sim.simx_return_ok)
+        disp('ERROR: Cannot find "OmniPlatform" object in CoppeliaSim');
+        sim.simxFinish(clientID);
+        sim.delete();
+        return;
+    end
+
     
     % Start simulation in CoppeliaSim
     [res] = sim.simxStartSimulation(clientID, sim.simx_opmode_blocking);
@@ -62,11 +71,18 @@ if (clientID > -1)
             % Linear interpolation between points
             for j = 0:10
                 alpha = j/10;
+                % --- UAV interpolation ---
                 interp_pos = (1-alpha)*data(i,1:3) + alpha*data(i+step,1:3);
                 interp_ang = (1-alpha)*data(i,4:6) + alpha*data(i+step,4:6);
-                
+            
                 sim.simxSetObjectPosition(clientID, quadHandle, -1, interp_pos, sim.simx_opmode_oneshot);
                 sim.simxSetObjectOrientation(clientID, quadHandle, -1, interp_ang, sim.simx_opmode_oneshot);
+            
+                % --- Platform update (sync with time) ---
+                t_now = (1-alpha)*time(i) + alpha*time(i+step);
+                [platform_pos, ~] = platform_trajectory(t_now);
+                sim.simxSetObjectPosition(clientID, platformHandle, -1, platform_pos(:)', sim.simx_opmode_oneshot);
+            
                 pause(0.01);
             end
             

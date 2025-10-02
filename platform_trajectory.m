@@ -9,10 +9,10 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
     %   platform_vel - platform velocity [vx, vy, vz]
     
     % Platform parameters
-    platform_height = 0.0;  % Platform stays at ground level
+    platform_height = 0;  % On the ground
     
     % Trajectory type selection
-    trajectory_type = 'linear';  % Options: 'circle', 'linear', 'figure8', 'stationary'
+    trajectory_type = 'linear_with_ending';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending'
     
     switch trajectory_type
         case 'stationary'
@@ -37,10 +37,38 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
             platform_vel = [xy_vel, 0];
 
             
+        case 'linear_with_ending'
+            % Linear trajectory with end point
+            start_pos = [0, 0]; % Initial position
+            end_pos = [-5, -3]; % End position
+            speed = 0.1; % m/s
+            
+            % Calculate direction and total distance
+            direction = end_pos - start_pos;
+            total_distance = norm(direction);
+            direction = direction / total_distance; % Normalize
+            
+            % Calculate time to reach end point
+            t_end = total_distance / speed;
+            
+            % Clamp position to end point after t_end
+            if t <= t_end
+                % Moving phase
+                xy_pos = start_pos + direction * speed * t;
+                xy_vel = direction * speed;
+            else
+                % Stopped at end point
+                xy_pos = end_pos;
+                xy_vel = [0, 0];
+            end
+            
+            platform_pos = [xy_pos, platform_height];
+            platform_vel = [xy_vel, 0];
+
         case 'circle'
             % Circular trajectory
             center = [-2, -1];
-            radius = 2.0;
+            radius = 4.0;
             angular_velocity = 0.1;  % rad/s (one revolution in ~60 seconds)
             
             angle = angular_velocity * t;
