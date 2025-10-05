@@ -14,7 +14,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
     platform_height = 0;  % On the ground
     
     % Trajectory type selection
-    trajectory_type = 'spline';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
+    trajectory_type = 'random_waypoints';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending'
     
     switch trajectory_type
         case 'stationary'
@@ -109,21 +109,21 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
             platform_vel = [vx, vy, 0];
 
         case 'spline'
-            % Hardcoded waypoints (modify these as needed)
-            t_total = 60;
+            % ============ PARAMETERS  =======================
+            N = 6;                  % Number of waypoints
+            x_range = 2;           % Max |x| value: x ∈ [-10, 10]
+            y_range = 2;            % Max |y| value: y ∈ [-2, 2]
+            z_height = 0;           % Constant z height
+            t_total = 20;           % Total time [s]
+            % ================================================
+            
+            % Generate waypoints ONCE (persistent)
             if isempty(waypoints_cache)
-                waypoints_cache = [
-                    -1.5,  0.8, 0;
-                     0.2, -1.2, 0;
-                     1.8,  0.5, 0;
-                     0.5,  1.6, 0;
-                    -0.8, -0.5, 0;
-                     1.2,  0.0, 0
-                ];
+                waypoints_cache = generate_random_waypoints(N, x_range, y_range, z_height);
             end
             
             % Create smooth trajectory
-            [pos, vel, ~] = generate_spline_trajectory(waypoints_cache, t, t_total);
+            [pos, vel, acc] = generate_spline_trajectory(waypoints_cache, t, t_total);
 
             platform_pos = pos;
             platform_vel = vel;
