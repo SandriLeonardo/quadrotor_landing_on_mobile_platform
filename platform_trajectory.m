@@ -14,7 +14,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
     platform_height = 0;  % On the ground
     
     % Trajectory type selection
-    trajectory_type = 'spline';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
+    trajectory_type = 'circle';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
     
     switch trajectory_type
         case 'stationary'
@@ -71,7 +71,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
             % Circular trajectory
             center = [-2, -1];
             radius = 4.0;
-            angular_velocity = 0.1;  % rad/s (one revolution in ~60 seconds)
+            angular_velocity = 0.05;  % rad/s (one revolution in ~60 seconds)
             
             angle = angular_velocity * t;
             
@@ -110,7 +110,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
 
         case 'spline'
             % Hardcoded waypoints (modify these as needed)
-            t_total = 60;
+            t_total = 200;
             if isempty(waypoints_cache)
                 waypoints_cache = [
                     -1.5,  0.8, 0;
@@ -123,7 +123,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
             end
             
             % Create smooth trajectory
-            [pos, vel, ~] = generate_spline_trajectory(waypoints_cache, t, t_total);
+            [pos, vel, ~] = generate_spline_trajectory(3*waypoints_cache, t, t_total);
 
             platform_pos = pos;
             platform_vel = vel;
