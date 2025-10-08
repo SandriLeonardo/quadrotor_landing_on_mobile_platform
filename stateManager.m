@@ -19,7 +19,7 @@ function [state, takeoff_traj] = stateManager(position, platform_position, t)
     altitude_threshold = 0.1;
     hover_time_required = 10.0;
     position_error_threshold = 0.2;
-    position_error_time_required = 5.0;
+    position_error_time_required = 15.0;
     landing_altitude = 0.05;
     target_hover_height = 3.0;  
 
