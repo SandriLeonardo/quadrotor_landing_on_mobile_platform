@@ -1,0 +1,194 @@
+function [sys,x0,str,ts,simStateCompliance] = coppelia_sync(t,x,u,flag,varargin)
+% S-Function for CoppeliaSim synchronization and visualization
+%
+% INPUTS: [x, y, z, roll, pitch, yaw] - 6 elements (quadrotor state)
+% OUTPUTS: [connection_status] - 1 if connected, 0 otherwise
+%
+% PARAMETERS: [sample_time, enable_sync, enable_logging]
+%   Example: [0.05, 1, 0] → 20Hz, sync mode ON, logging OFF
+
+%% Persistent variables (shared across S-Function calls)
+persistent sim clientID quadHandle platformHandle connected
+persistent enable_logging enable_sync frame_count
+
+%% Main switch
+switch flag
+    case 0  % ==================== INITIALIZATION ====================
+        % Parse parameters
+        if nargin >= 5 && ~isempty(varargin{1})
+            sample_time = varargin{1}(1);
+            if length(varargin{1}) >= 2
+                enable_sync = varargin{1}(2);
+            else
+                enable_sync = 1;
+            end
+            if length(varargin{1}) >= 3
+                enable_logging = varargin{1}(3);
+            else
+                enable_logging = 0;
+            end
+        else
+            sample_time = 0.05;
+            enable_sync = 1;
+            enable_logging = 0;
+        end
+        
+        % Setup sizes structure
+        sizes = simsizes;
+        sizes.NumContStates  = 0;
+        sizes.NumDiscStates  = 0;
+        sizes.NumOutputs     = 1;  % connection status
+        sizes.NumInputs      = 6;  % [x, y, z, roll, pitch, yaw]
+        sizes.DirFeedthrough = 0;
+        sizes.NumSampleTimes = 1;
+        
+        sys = simsizes(sizes);
+        x0  = [];
+        str = [];
+        ts  = [sample_time 0];
+        simStateCompliance = 'UnknownSimState';
+        
+        frame_count = 0;
+        
+        % Connect to CoppeliaSim
+        fprintf('\n========================================\n');
+        fprintf('[CoppeliaSim Sync] Initialization\n');
+        fprintf('========================================\n');
+        
+        try
+            % Initialize Remote API
+            sim = remApi('remoteApi');
+            sim.simxFinish(-1);
+            
+            fprintf('[INFO] Connecting to CoppeliaSim (127.0.0.1:19997)...\n');
+            clientID = sim.simxStart('127.0.0.1', 19997, true, true, 5000, 5);
+            
+            if clientID > -1
+                fprintf('[OK] Connected! ClientID: %d\n', clientID);
+                
+                % Get object handles
+                fprintf('[INFO] Getting object handles...\n');
+                [res_quad, quadHandle] = sim.simxGetObjectHandle(clientID, 'Quadcopter', sim.simx_opmode_blocking);
+                [res_plat, platformHandle] = sim.simxGetObjectHandle(clientID, 'OmniPlatform', sim.simx_opmode_blocking);
+                
+                if res_quad ~= sim.simx_return_ok
+                    error('Cannot find Quadcopter object');
+                end
+                if res_plat ~= sim.simx_return_ok
+                    error('Cannot find OmniPlatform object');
+                end
+                fprintf('[OK] Handles: quad=%d, platform=%d\n', quadHandle, platformHandle);
+                
+                % Initialize streaming
+                sim.simxGetObjectPosition(clientID, quadHandle, -1, sim.simx_opmode_streaming);
+                sim.simxGetObjectOrientation(clientID, quadHandle, -1, sim.simx_opmode_streaming);
+                pause(0.1);
+                
+                % Enable synchronous mode
+                if enable_sync
+                    fprintf('[INFO] Enabling synchronous mode...\n');
+                    sim.simxSynchronous(clientID, true);
+                end
+                
+                % Start simulation
+                fprintf('[INFO] Starting simulation...\n');
+                sim.simxStartSimulation(clientID, sim.simx_opmode_blocking);
+                pause(0.5);
+                
+                connected = true;
+                
+                % Store in global workspace for camera S-Function
+                assignin('base', 'COPPELIA_SIM', sim);
+                assignin('base', 'COPPELIA_CLIENTID', clientID);
+                assignin('base', 'COPPELIA_QUADHANDLE', quadHandle);
+                assignin('base', 'COPPELIA_CONNECTED', true);
+                
+                fprintf('[OK] Sync S-Function ready!\n');
+                fprintf('========================================\n\n');
+            else
+                error('Failed to connect to CoppeliaSim');
+            end
+            
+        catch ME
+            fprintf('[ERROR] %s\n', ME.message);
+            connected = false;
+        end
+        
+    case 2  % ==================== UPDATE ====================
+        sys = [];
+        
+case 3  % ==================== OUTPUTS ====================
+    if connected
+        try
+            frame_count = frame_count + 1;
+            
+            % STEP 1: Update object positions BEFORE triggering
+            if ~isempty(u) && length(u) >= 6 && all(~isnan(u(1:6))) && all(~isinf(u(1:6)))
+                sim.simxSetObjectPosition(clientID, quadHandle, -1, u(1:3), sim.simx_opmode_oneshot);
+                sim.simxSetObjectOrientation(clientID, quadHandle, -1, u(4:6), sim.simx_opmode_oneshot);
+                
+                if enable_logging && mod(frame_count, 100) == 0
+                    fprintf('[Sync] Frame %d - Quad: [%.2f, %.2f, %.2f]\n', ...
+                        frame_count, u(1), u(2), u(3));
+                end
+            end
+            
+            % Update platform position
+            [platform_pos, ~] = platform_trajectory(t);
+            sim.simxSetObjectPosition(clientID, platformHandle, -1, platform_pos(:)', sim.simx_opmode_oneshot);
+            
+            % STEP 2: Now trigger the simulation step
+            if enable_sync
+                sim.simxSynchronousTrigger(clientID);
+                sim.simxGetPingTime(clientID);  % Wait for step completion
+            end
+            
+            sys = 1;  % Connected
+            
+        catch ME
+            fprintf('[ERROR] Sync failed: %s\n', ME.message);
+            sys = 0;
+        end
+    else
+        sys = 0;
+    end
+```
+
+---
+
+## **Key Change:**
+
+**Before (wrong order):**
+```
+Trigger → Wait → Update objects
+```
+
+**After (correct order):**
+```
+Update objects → Trigger → Wait
+        
+    case 9  % ==================== TERMINATION ====================
+        if connected
+            fprintf('\n[CoppeliaSim Sync] Shutting down...\n');
+            fprintf('  Total frames: %d\n', frame_count);
+            
+            try
+                sim.simxStopSimulation(clientID, sim.simx_opmode_blocking);
+                pause(0.5);
+                sim.simxFinish(clientID);
+                fprintf('[OK] Disconnected\n');
+            catch ME
+                fprintf('[WARNING] Cleanup error: %s\n', ME.message);
+            end
+            
+            % Clear global variables
+            evalin('base', 'clear COPPELIA_SIM COPPELIA_CLIENTID COPPELIA_QUADHANDLE COPPELIA_CONNECTED');
+            connected = false;
+        end
+        sys = [];
+        
+    otherwise
+        sys = [];
+end
+
+end
