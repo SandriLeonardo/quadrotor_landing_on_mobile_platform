@@ -69,7 +69,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
 
         case 'circle'
             % Circular trajectory
-            center = [-2, -1];
+            center = [4, 2];
             radius = 4.0;
             angular_velocity = 0.05;  % rad/s (one revolution in ~60 seconds)
             

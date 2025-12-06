@@ -94,7 +94,15 @@ end
 
 
 % ---------- PSI ANGLE ERRORS (ALONG THE Z AXIS) 
-e_psi = ref_ang_pos(3) - psi;                       %PROPORTIONAL ERROR
+e_psi = ref_ang_pos(3) - psi;
+
+while e_psi > pi
+    e_psi = e_psi - 2*pi;
+end
+while e_psi < -pi
+    e_psi = e_psi + 2*pi;
+end                                                 %PROPORTIONAL ERROR
+
 e_psi_dot = ref_ang_vel(3) - psi_dot;               %DERIVATIVE ERROR
 
 

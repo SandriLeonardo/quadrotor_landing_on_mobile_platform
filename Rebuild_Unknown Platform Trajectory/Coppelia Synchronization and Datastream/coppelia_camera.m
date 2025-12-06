@@ -261,22 +261,22 @@ switch flag
 
                         if res_pos == sim.simx_return_ok && res_ori == sim.simx_return_ok
                             if enable_logging
-                                fprintf('Quad: pos=[%.3f,%.3f,%.3f] ori=[%.3f,%.3f,%.3f]\n', ...
-                                    quad_pos(1), quad_pos(2), quad_pos(3), ...
-                                    quad_ori(1), quad_ori(2), quad_ori(3));
-                                fprintf('Plat cam: [%.3f,%.3f,%.3f]\n', ...
-                                    platform_pos_cam(1), platform_pos_cam(2), platform_pos_cam(3));
+                                %fprintf('Quad: pos=[%.3f,%.3f,%.3f] ori=[%.3f,%.3f,%.3f]\n', ...
+                                    %quad_pos(1), quad_pos(2), quad_pos(3), ...
+                                    %quad_ori(1), quad_ori(2), quad_ori(3));
+                                %fprintf('Plat cam: [%.3f,%.3f,%.3f]\n', ...
+                                    %platform_pos_cam(1), platform_pos_cam(2), platform_pos_cam(3));
                             end
                             
                             if enable_logging && frame_count >= 10
-                                fprintf('===TRANSFORM DEBUG (Frame %d) ===\n', frame_count);
-                                fprintf('Platform CAMERA frame: [%.3f, %.3f, %.3f]\n', ...
-                                    platform_pos_cam(1), platform_pos_cam(2), platform_pos_cam(3));
-                                fprintf('Quad altitude: %.3f m\n', quad_pos(3));
-                                fprintf('Platform depth (Z_cam): %.3f m\n', platform_pos_cam(3));
-                                fprintf('Depth ratio (Z_cam/alt): %.3f (should≈1 if level)\n', ...
-                                    platform_pos_cam(3)/quad_pos(3));
-                                fprintf('=======================\n\n');
+                                %fprintf('===TRANSFORM DEBUG (Frame %d) ===\n', frame_count);
+                                %fprintf('Platform CAMERA frame: [%.3f, %.3f, %.3f]\n', ...
+                                    %platform_pos_cam(1), platform_pos_cam(2), platform_pos_cam(3));
+                                %fprintf('Quad altitude: %.3f m\n', quad_pos(3));
+                                %fprintf('Platform depth (Z_cam): %.3f m\n', platform_pos_cam(3));
+                                %fprintf('Depth ratio (Z_cam/alt): %.3f (should≈1 if level)\n', ...
+                                    %platform_pos_cam(3)/quad_pos(3));
+                                %fprintf('=======================\n\n');
                             end
 
 
@@ -287,15 +287,15 @@ switch flag
 
                             % Safety check for avoiding NaN/Inf
                             if any(isnan(platform_pos_world)) || any(isinf(platform_pos_world))
-                                fprintf('[ERROR] platform_pos_world contains NaN/Inf\n');
+                                %fprintf('[ERROR] platform_pos_world contains NaN/Inf\n');
                                 sys = [0; 0; 0; 0; fov];                    % default output
                             else
                                 sys = double([platform_pos_world; 1; fov]); % detected flag = 1
                             end
                             
                             if enable_logging
-                                fprintf('Plat world: [%.3f,%.3f,%.3f]\n', ...
-                                    platform_pos_world(1), platform_pos_world(2), platform_pos_world(3));
+                                %fprintf('Plat world: [%.3f,%.3f,%.3f]\n', ...
+                                    %platform_pos_world(1), platform_pos_world(2), platform_pos_world(3));
                             end
                             
                             % Convert to double for Simulink compatibility, in case platform_pos_world is not
@@ -303,7 +303,7 @@ switch flag
                             try
                                 sys = double([platform_pos_world; 1; fov]);   
                             catch ME
-                                fprintf('[ERROR] Converting to double failed: %s\n', ME.message);
+                                %fprintf('[ERROR] Converting to double failed: %s\n', ME.message);
                                 sys = [0; 0; 0; 0; fov];
                             end
 
@@ -325,8 +325,8 @@ switch flag
                                         sim.simx_opmode_oneshot);
                                     
                                     if enable_logging
-                                        fprintf('[ADAPTIVE FOCUS] Altitude: %.3f m, FOV set to %.2f degrees\n', ...
-                                            quadrotor_height, fov);
+                                        %fprintf('[ADAPTIVE FOCUS] Altitude: %.3f m, FOV set to %.2f degrees\n', ...
+                                            %quadrotor_height, fov);
                                     end
 
                                     % Update intrinsics after changing FOV so PnP
@@ -369,7 +369,7 @@ switch flag
                 end
                 
             catch ME
-                fprintf('[ERROR] %s\n', ME.message);
+                %fprintf('[ERROR] %s\n', ME.message);
                 sys = [0; 0; 0; 0; fov];
             end
         else
@@ -386,8 +386,8 @@ switch flag
         %======================================================================
 
         if connected
-            fprintf('\n[CoppeliaSim Camera] Shutting down...\n');
-            fprintf('[OK] Camera terminated (frames: %d)\n', frame_count);
+            %fprintf('\n[CoppeliaSim Camera] Shutting down...\n');
+            %fprintf('[OK] Camera terminated (frames: %d)\n', frame_count);
         end
         sys = [];
         
@@ -446,11 +446,11 @@ function [platform_pos, detected, debug_imgs] = detect_landing_platform(...
 
     % DEBUGGING LOGS
     if isempty(landing_tag)
-        fprintf('[DEBUG] No quadrangle found\n');
+        %fprintf('[DEBUG] No quadrangle found\n');
         cc = bwconncomp(binary_image);                                      %function to find connected components, from Image Processing Toolbox
-        fprintf('[DEBUG] Found %d regions\n', cc.NumObjects);
+        %fprintf('[DEBUG] Found %d regions\n', cc.NumObjects);
     else
-        fprintf('[DEBUG] Quadrangle found, corners: %d\n', size(tag_corners,1));
+        %fprintf('[DEBUG] Quadrangle found, corners: %d\n', size(tag_corners,1));
     end
 
     % Early exit if no landing tag found
@@ -471,19 +471,19 @@ function [platform_pos, detected, debug_imgs] = detect_landing_platform(...
     if circle_found
         corners_2d = circle_corners;
         if enable_logging
-            fprintf('  -> Circle pattern detected\n');
+            %fprintf('  -> Circle pattern detected\n');
         end
     else
         [cross_found, cross_corners] = detect_cross_pattern(landing_tag);
         if cross_found
             corners_2d = cross_corners;
             if enable_logging
-                fprintf('  -> Cross pattern detected\n');
+                %fprintf('  -> Cross pattern detected\n');
             end
         else
             corners_2d = tag_corners;
             if enable_logging
-                fprintf('  -> Using quadrangle corners\n');
+                %fprintf('  -> Using quadrangle corners\n');
             end
         end
     end
@@ -499,16 +499,16 @@ function [platform_pos, detected, debug_imgs] = detect_landing_platform(...
     num_corners_after = size(corners_2d, 1);
 
     if enable_logging
-        fprintf('  [RANSAC] Corners: %d -> %d (filtered %d)\n', ...
-            num_corners_before, num_corners_after, num_corners_before - num_corners_after);
+        %fprintf('  [RANSAC] Corners: %d -> %d (filtered %d)\n', ...
+            %num_corners_before, num_corners_after, num_corners_before - num_corners_after);
     end
 
     % CRITICAL: Validate RANSAC output
     if size(corners_2d, 1) < 4
         ransac_fail_count = ransac_fail_count + 1;
         if enable_logging
-            fprintf('  [RANSAC FAIL] Only %d/4 corners - Frame %d - Total fails: %d\n', ...
-                num_corners_after, frame_count, ransac_fail_count);
+            %fprintf('  [RANSAC FAIL] Only %d/4 corners - Frame %d - Total fails: %d\n', ...
+             %   num_corners_after, frame_count, ransac_fail_count);
         end
         debug_imgs.detection = image;
         debug_imgs.ransac_fail = true;
@@ -525,8 +525,8 @@ function [platform_pos, detected, debug_imgs] = detect_landing_platform(...
     if success
         corner_spacing = norm(corners_2d(1,:) - corners_2d(2,:)); % pixels
         expected_spacing = (tag_size / t(3)) * camera_params.focal_length;
-        fprintf('Corner spacing: %.1f px (detected) vs %.1f px (expected at Z=%.2f)\n', ...
-            corner_spacing, expected_spacing, t(3));
+        %fprintf('Corner spacing: %.1f px (detected) vs %.1f px (expected at Z=%.2f)\n', ...
+            %corner_spacing, expected_spacing, t(3));
     end
 
 
@@ -577,15 +577,15 @@ function [rectx, recty] = minboundrect(x, y)
         k = convhull(x, y);
         hull_x = x(k);
         hull_y = y(k);
-        fprintf('[MBR] Convex hull: %d points from %d boundary points\n', length(k), length(x));
+        %fprintf('[MBR] Convex hull: %d points from %d boundary points\n', length(k), length(x));
     catch ME
-        fprintf('[MBR FAIL] Convex hull failed: %s\n', ME.message);
+        %fprintf('[MBR FAIL] Convex hull failed: %s\n', ME.message);
         rectx = []; recty = [];
         return;
     end
     
     if length(hull_x) < 3
-        fprintf('[MBR FAIL] Hull has only %d points (need ≥3)\n', length(hull_x));
+        %fprintf('[MBR FAIL] Hull has only %d points (need ≥3)\n', length(hull_x));
         rectx = []; recty = [];
         return;
     end
@@ -619,12 +619,12 @@ function [rectx, recty] = minboundrect(x, y)
     end
     
     if isempty(best_corners)
-        fprintf('[MBR FAIL] No valid rectangle found after %d iterations\n', length(hull_x)-1);
+        %fprintf('[MBR FAIL] No valid rectangle found after %d iterations\n', length(hull_x)-1);
         rectx = []; recty = [];
         return;
     end
     
-    fprintf('[MBR OK] Min area: %.1f px², corners found\n', min_area);
+    %fprintf('[MBR OK] Min area: %.1f px², corners found\n', min_area);
     rectx = best_corners(1,:)';
     recty = best_corners(2,:)';
 end
@@ -806,9 +806,9 @@ function [R, t, success] = solve_pnp(points_3d, points_2d, camera_params, enable
     lambda = 1 / norm(h1);
 
     if enable_logging
-        fprintf('  [PnP] Lambda: %.4f\n', lambda);
-        fprintf('  [PnP] Recovered depth: %.3f m\n', lambda * norm(h3));
-        fprintf('  [PnP] h3 magnitude: %.4f\n', norm(h3));
+        %fprintf('  [PnP] Lambda: %.4f\n', lambda);
+        %fprintf('  [PnP] Recovered depth: %.3f m\n', lambda * norm(h3));
+        %fprintf('  [PnP] h3 magnitude: %.4f\n', norm(h3));
     end
     
     % Extract rotation columns and translation
@@ -849,12 +849,12 @@ function [R, t, success] = solve_pnp(points_3d, points_2d, camera_params, enable
     if t(3) > 0 && t(3) < 10  % Reasonable depth range
         success = true;
         if enable_logging
-            fprintf('  -> PnP SUCCESS: pos=[%.3f, %.3f, %.3f], depth=%.3f\n', ...
-                t(1), t(2), t(3), norm(t));
+            %fprintf('  -> PnP SUCCESS: pos=[%.3f, %.3f, %.3f], depth=%.3f\n', ...
+                %t(1), t(2), t(3), norm(t));
         end
     else
         if enable_logging
-            fprintf('  -> PnP FAILED (invalid depth: %.3f)\n', t(3));
+            %fprintf('  -> PnP FAILED (invalid depth: %.3f)\n', t(3));
         end
     end
 end
@@ -952,7 +952,3 @@ function corners_ordered = normalize_corner_order(corners)
     % Rotate array so top-left is first
     corners_ordered = circshift(corners_sorted, -top_left_idx + 1, 1);
 end
-
-
-
-

@@ -47,7 +47,7 @@ switch flag
         sizes.NumContStates = 0;
         sizes.NumDiscStates = 0;
         sizes.NumOutputs = 8;
-        sizes.NumInputs = 5;
+        sizes.NumInputs = 6;  
         sizes.DirFeedthrough = 1;
         sizes.NumSampleTimes = 1;
         
@@ -57,8 +57,8 @@ switch flag
         ts = [sample_time 0];
         simStateCompliance = 'UnknownSimState';
         
-        fprintf('[Kalman Filter] Initialized (dt=%.3f, Q_pos=%.3f, Q_vel=%.3f, R=%.3f)\n', ...
-            sample_time, q_pos, q_vel, r_meas);
+        %fprintf('[Kalman Filter] Initialized (dt=%.3f, Q_pos=%.3f, Q_vel=%.3f, R=%.3f)\n', ...
+            %sample_time, q_pos, q_vel, r_meas);
         
     case 3  % Output
         frame_count = frame_count + 1;
@@ -66,22 +66,32 @@ switch flag
         z_meas = u(1:3);
         detected = u(4);
         %fov = u(5); % Not used in Kalman filter
+        enabled = u(6);  % Nuovo input
         
         if enable_logging && mod(frame_count, 20) == 0
-            fprintf('[KALMAN] Frame %d, detected=%d\n', frame_count, detected);
+            %fprintf('[KALMAN] Frame %d, detected=%d, enabled=%d\n', frame_count, detected, enabled);
         end
         
         % Initialize on first detection
-        if ~initialized && detected == 1
+        if ~initialized && detected == 1 && enabled == 1
             x_hat = [z_meas; 0; 0; 0];
             P = eye(6) * 10;
             initialized = true;
-            fprintf('[Kalman] INITIALIZED at [%.3f, %.3f, %.3f]\n', ...
-                z_meas(1), z_meas(2), z_meas(3));
+            %fprintf('[Kalman] INITIALIZED at [%.3f, %.3f, %.3f]\n', ...
+                %z_meas(1), z_meas(2), z_meas(3));
         end
         
         if ~initialized
             sys = [0; 0; 0; 0; 0; 0; 0; 0];
+            return;
+        end
+        
+        % Se enabled = 0, restituisci le stime precedenti senza aggiornare
+        if enabled == 0
+            if enable_logging
+                fprintf('  [DISABLED] Using previous estimates\n');
+            end
+            sys = [x_hat; detected; initialized];
             return;
         end
         
@@ -90,9 +100,9 @@ switch flag
         P_pred = F * P * F' + Q;
         
         if enable_logging && detected == 1
-            fprintf('  [PREDICT] pos=[%.3f, %.3f, %.3f], vel=[%.3f, %.3f, %.3f]\n', ...
-                x_hat_pred(1), x_hat_pred(2), x_hat_pred(3), ...
-                x_hat_pred(4), x_hat_pred(5), x_hat_pred(6));
+            %fprintf('  [PREDICT] pos=[%.3f, %.3f, %.3f], vel=[%.3f, %.3f, %.3f]\n', ...
+             %   x_hat_pred(1), x_hat_pred(2), x_hat_pred(3), ...
+              %  x_hat_pred(4), x_hat_pred(5), x_hat_pred(6));
         end
         
         % Update
@@ -104,7 +114,7 @@ switch flag
             P = (eye(6) - K * H) * P_pred;
             
             if enable_logging
-                fprintf('  [UPDATE] innovation=[%.3f, %.3f, %.3f]\n', y(1), y(2), y(3));
+                %fprintf('  [UPDATE] innovation=[%.3f, %.3f, %.3f]\n', y(1), y(2), y(3));
                 fprintf('  [CORRECTED] pos=[%.3f, %.3f, %.3f], vel=[%.3f, %.3f, %.3f]\n', ...
                     x_hat(1), x_hat(2), x_hat(3), ...
                     x_hat(4), x_hat(5), x_hat(6));
@@ -113,14 +123,14 @@ switch flag
             x_hat = x_hat_pred;
             P = P_pred;
             if enable_logging
-                fprintf('  [NO UPDATE] Using prediction only\n');
+                %fprintf('  [NO UPDATE] Using prediction only\n');
             end
         end
         
-        sys = [x_hat; detected;initialized];
+        sys = [x_hat; detected; initialized];
         
     case 9
-        fprintf('[Kalman Filter] Terminated (frames: %d)\n', frame_count);
+        %fprintf('[Kalman Filter] Terminated (frames: %d)\n', frame_count);
         sys = [];
         
     otherwise
