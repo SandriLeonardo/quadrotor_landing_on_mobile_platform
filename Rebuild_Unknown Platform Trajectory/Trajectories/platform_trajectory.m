@@ -69,7 +69,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
 
         case 'circle'
             % Circular trajectory
-            center = [4, 2];
+            center = [-2, -1]; %[4 2] to see random walk
             radius = 4.0;
             angular_velocity = 0.05;  % rad/s (one revolution in ~60 seconds)
             

@@ -8,8 +8,8 @@ Iz = 0.2;       % Momento d'inerzia asse z [kg·m²]
 
 %% GUADAGNI PID
 %Controllo Posizione (x, y, z)
-Kp_pos = [50, 50,30];    % 2.4 2.4 15
-Kd_pos = [50,50,40];    
+Kp_pos = [20, 20,30];    % 2.4 2.4 15
+Kd_pos = [15,15,40];    
 Ki_pos = [8,8,16];  % 0.01,0.01
 
 % Controllo Angoli (φ, θ, ψ)

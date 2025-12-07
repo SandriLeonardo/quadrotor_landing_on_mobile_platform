@@ -1,7 +1,7 @@
 function [state, traj] = stateManager(position, platform_position, detected, t)
 
     % Persistent variables (maintain values between time steps)
-    persistent current_state hover_start_time last_t position_error_start_time detection_start_time state3_start_time state3_start_pos 
+    persistent current_state hover_start_time last_t position_error_start_time detection_start_time state3_start_time state3_start_pos
 
     
     % Initialize on first run
@@ -12,6 +12,7 @@ function [state, traj] = stateManager(position, platform_position, detected, t)
         position_error_start_time = -1;
         detection_start_time = -1;
         
+        % NEW: Initialize State 3 variables
         state3_start_time = -1;
         state3_start_pos = [0,0,0];
     end
@@ -202,11 +203,15 @@ function [state, traj] = stateManager(position, platform_position, detected, t)
 
             time_detected = (detection_start_time > 0) * (t - detection_start_time);
             
-            % if time_detected > 0
-            %     angular_velocity = 0.2/exp(time_detected);
-            % else
-            %     angular_velocity = 0.2;
-            % end
+            if time_detected > 0
+                angular_velocity = angular_velocity/exp(time_detected);
+            else
+                angular_velocity = 0.2;
+
+            if mod(time_detected,1) == 0
+                fprintf('AO');
+            end
+     
 
             if  time_detected >= 2.0
                 current_state = 2;
@@ -215,6 +220,7 @@ function [state, traj] = stateManager(position, platform_position, detected, t)
                 state3_start_time = -1; 
             end
 
+            end
             
         %% LANDING
         case 4 % Landing
