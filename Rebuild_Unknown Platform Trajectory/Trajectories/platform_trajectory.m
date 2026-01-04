@@ -14,7 +14,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
     platform_height = 0;  % On the ground
     
     % Trajectory type selection
-    trajectory_type = 'circle';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
+    trajectory_type = 'linear';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
     
     switch trajectory_type
         case 'stationary'
@@ -88,7 +88,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
             % Figure-8 trajectory (Lemniscate)
             center = [-2, -1];
             scale = 2.0;
-            angular_velocity = 0.15;  % rad/s
+            angular_velocity = 0.12;  % rad/s
             
             angle = angular_velocity * t;
             
