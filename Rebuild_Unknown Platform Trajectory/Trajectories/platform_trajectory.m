@@ -14,7 +14,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
     platform_height = 0;  % On the ground
     
     % Trajectory type selection
-    trajectory_type = 'linear';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
+    trajectory_type = 'circle';  % Options: 'circle', 'linear', 'figure8', 'stationary', 'linear_with_ending', 'spline'
     
     switch trajectory_type
         case 'stationary'
@@ -69,7 +69,7 @@ function [platform_pos, platform_vel] = platform_trajectory(t)
 
         case 'circle'
             % Circular trajectory
-            center = [-2, -1]; %[4 2] to see random walk
+            center = [4, 2]; %[4 2] to see random walk
             radius = 4.0;
             angular_velocity = 0.05;  % rad/s (one revolution in ~60 seconds)
             

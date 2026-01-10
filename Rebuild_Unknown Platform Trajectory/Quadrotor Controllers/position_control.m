@@ -94,7 +94,7 @@ U_y = Kp_pos(2) * ey + Kd_pos(2) * ey_dot + Ki_pos(2) * integral_error_y + y_d_d
 %------------------------------------------------------------------------
 %                           CONTROL INPUT BOUNDS
 %------------------------------------------------------------------------
-max_tilt_angle = 0.7;                        
+max_tilt_angle = 0.7;                     
 max_lateral_accel = g * tan(max_tilt_angle); 
 asinboundary = 0.99;                         
 
