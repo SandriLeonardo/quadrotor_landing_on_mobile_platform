@@ -1,14 +1,14 @@
 # Vision-Based Autonomous Quadrotor Landing on a Moving Platform
 
 <p align="center">
-  <img src="README%20assets/Cover%20Gif.gif" alt="Autonomous quadrotor landing on a moving platform" />
+  <img src="README%20assets/Cover%20Gif.gif" alt="Autonomous quadrotor landing on a moving platform" width="75%" />
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/MATLAB-R2024b-orange?logo=mathworks&logoColor=white" alt="MATLAB" height="28" />
-  <img src="https://img.shields.io/badge/Simulink-R2024b-orange?logo=mathworks&logoColor=white" alt="Simulink" height="28" />
-  <img src="https://img.shields.io/badge/CoppeliaSim-EDU-blue" alt="CoppeliaSim" height="28" />
-  <img src="https://img.shields.io/badge/Status-Simulation-yellow" alt="Simulation" height="28" />
+  <img src="https://img.shields.io/badge/MATLAB-R2024b-orange?logo=mathworks&logoColor=white" alt="MATLAB" height="32" />
+  <img src="https://img.shields.io/badge/Simulink-R2024b-orange?logo=mathworks&logoColor=white" alt="Simulink" height="32" />
+  <img src="https://img.shields.io/badge/CoppeliaSim-EDU-blue" alt="CoppeliaSim" height="32" />
+  <img src="https://img.shields.io/badge/Status-Simulation-yellow" alt="Simulation" height="32" />
 </p>
 
 **System Design and Simulation Validation**
